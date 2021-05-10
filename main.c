@@ -23,6 +23,22 @@ typedef struct
     u8 *data;
 }String;
 
+void
+string_to_upper(String *string)
+{
+    u8 *p = string->data;
+    for(u8 *cur_letter = string->data;
+        *cur_letter;
+        cur_letter++)
+    {
+        if((*cur_letter >= 'a') && (*cur_letter <= 'z'))
+        {
+            *p = *cur_letter - 32;
+        }
+        p++;
+    }
+}
+
 // how much that letter ocurrs in string
 u16 
 string_how_much(String *string, u8 letter)
@@ -142,11 +158,7 @@ string_free(String *string)
 void
 string_print(String *string, FILE *file)
 {
-    static char buf[65537];
-    memcpy(&buf,string->data,string->length);
-    buf[string->length] = '\0';
-    fprintf(file, "%s", buf);
-    
+    fwrite(string->data,sizeof(char), string->length, file);
 }
 
 u16
@@ -206,8 +218,8 @@ string_right(String *src_string, u16 length)
 
 int main(int argc,char *argv[])
 {
-    String *my_first_string = string_clone("Hello world! ");
-    String *my_second_string = string_clone("world Hello!");
+    String *my_first_string = string_clone("Hello world ");
+    String *my_second_string = string_clone("world Hello");
     
     string_print(my_first_string,stdout);
     fprintf(stdout,"\n");
@@ -250,6 +262,9 @@ int main(int argc,char *argv[])
     fprintf(stdout,"The letter:[%c]: occurs [%d] times in string: [%s]", 'o',n,my_first_string->data);
     
     fprintf(stdout,"\n");
+    
+    string_to_upper(my_second_string);
+    string_print(my_second_string,stdout);
     
     
     string_free(reversed_string_test);
